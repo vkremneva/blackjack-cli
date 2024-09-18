@@ -4,7 +4,7 @@ const char* CARD_SUIT_NAME[] = {
     "Hearts ♥", 
     "Clubs ♣", 
     "Diamond ♦", 
-    "Spades♠"
+    "Spades ♠"
 };
 const uint8_t CARD_SUIT_DATA[] = {
     0x01, //0001
@@ -56,7 +56,7 @@ status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
     uint8_t newData = 0;
     status_t status = createCardData(rank, suit, &newData);
     if (status == FAILURE) {
-        fprintf(stderr, "Failed to create card data: not matching defined constraints\n");
+        fprintf(stderr, "Failed to create card data: not matching the defined constraints\n");
         fprintf(stderr, "Provided rank: %d\n", rank);
         fprintf(stderr, "Provided suit: %d\n", suit);
         free(card);
@@ -71,14 +71,29 @@ status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
 }
 
 int8_t getRankData(card_t *card) {
-    return (card->data) >> 4;
+    if (card == NULL) {
+        fprintf(stderr, "Failed to get the rank data: the card is NULL\n");
+        return 0;
+    } else {
+        return (card->data) >> 4;
+    }
 }
 
 int8_t getSuitData(card_t *card) {
-    return (card->data) & 0x0F;
+    if (card == NULL) {
+        fprintf(stderr, "Failed to get the suit data: the card is NULL\n");
+        return 0;
+    } else {
+        return (card->data) & 0x0F;
+    }
 }
 
 status_t getSuitName(card_t *card, char *suitName) {
+    if (card == NULL) {
+        fprintf(stderr, "Failed to get the suit name: the card is NULL\n");
+        return FAILURE;
+    }
+
     uint8_t suit_data = getSuitData(card);
     for (size_t i = 0; i < CARD_SUIT_AMOUNT; ++i) {
         if (suit_data == CARD_SUIT_DATA[i]) {
@@ -94,6 +109,10 @@ status_t getSuitName(card_t *card, char *suitName) {
 }
 
 status_t getRankName(card_t *card, char *rankName) {
+    if (card == NULL) {
+        fprintf(stderr, "Failed to get the rank name: the card is NULL\n");
+        return FAILURE;
+    }
     uint8_t rank = getRankData(card);
 
     if (isValidRank(rank)) {
