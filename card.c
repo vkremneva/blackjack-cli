@@ -39,7 +39,7 @@ bool isValidSuit(uint8_t suit) {
 
 status_t createCardData(uint8_t rank, uint8_t suit, uint8_t *newData) {
     if (isValidRank(rank) && isValidSuit(suit)) {
-        *newData = (rank | (suit << 4));
+        *newData = ((rank << 4) | suit );
         return SUCCESS;
     } 
     
