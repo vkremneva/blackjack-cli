@@ -49,16 +49,16 @@ status_t createCardData(uint8_t rank, uint8_t suit, uint8_t *newData) {
 status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
     card_t *card = (card_t *)malloc(sizeof(card_t));
     if (card == NULL) {
-        fprintf(stderr, "Failed to create single card.\n");
+        fprintf(stderr, "createSingleCard: failed to allocate memory.\n");
         return FAILURE;
     }
 
     uint8_t newData = 0;
     status_t status = createCardData(rank, suit, &newData);
     if (status == FAILURE) {
-        fprintf(stderr, "Failed to create card data: not matching the defined constraints\n");
-        fprintf(stderr, "Provided rank: %d\n", rank);
-        fprintf(stderr, "Provided suit: %d\n", suit);
+        fprintf(stderr, "createSingleCard: failed to create card data.\n");
+        fprintf(stderr, "Provided rank: %d.\n", rank);
+        fprintf(stderr, "Provided suit: %d.\n", suit);
         free(card);
         return FAILURE;
     }
@@ -70,9 +70,25 @@ status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
     return SUCCESS;
 }
 
+status_t freeSingleCard(card_t *card) {
+    if (card == NULL) {
+        fprintf(stderr, "freeSingleCard: card is NULL.\n");
+        return FAILURE;
+    }
+
+    if (card->next == NULL) {
+        free(card);
+        fprintf(stderr, "freeSingleCard: card->next is NULL, free card success.\n");
+        return SUCCESS;
+    } else {
+        fprintf(stderr, "freeSingleCard: card is not single.\n");
+        return FAILURE;
+    }
+}
+
 int8_t getRankData(card_t *card) {
     if (card == NULL) {
-        fprintf(stderr, "Failed to get the rank data: the card is NULL\n");
+        fprintf(stderr, "getRankData: failed, the card is NULL.\n");
         return 0;
     } else {
         return (card->data) >> 4;
@@ -81,7 +97,7 @@ int8_t getRankData(card_t *card) {
 
 int8_t getSuitData(card_t *card) {
     if (card == NULL) {
-        fprintf(stderr, "Failed to get the suit data: the card is NULL\n");
+        fprintf(stderr, "getSuitData: failed, the card is NULL.\n");
         return 0;
     } else {
         return (card->data) & 0x0F;
@@ -90,7 +106,7 @@ int8_t getSuitData(card_t *card) {
 
 status_t getSuitName(card_t *card, char *suitName) {
     if (card == NULL) {
-        fprintf(stderr, "Failed to get the suit name: the card is NULL\n");
+        fprintf(stderr, "getSuitName: failed, the card is NULL.\n");
         return FAILURE;
     }
 
@@ -102,15 +118,15 @@ status_t getSuitName(card_t *card, char *suitName) {
         }
     }
 
-    fprintf(stderr, "Failed to determine the suit of the card\n");
-    fprintf(stderr, "Provided card data: %d\n", card->data);
-    fprintf(stderr, "Deduced suit data: %d\n", suit_data);
+    fprintf(stderr, "getSuitName: failed, no such suit.\n");
+    fprintf(stderr, "Provided card data: %d.\n", card->data);
+    fprintf(stderr, "Deduced suit data: %d.\n", suit_data);
     return FAILURE;
 }
 
 status_t getRankName(card_t *card, char *rankName) {
     if (card == NULL) {
-        fprintf(stderr, "Failed to get the rank name: the card is NULL\n");
+        fprintf(stderr, "getRankName: failed, the card is NULL.\n");
         return FAILURE;
     }
     uint8_t rank = getRankData(card);
@@ -119,9 +135,9 @@ status_t getRankName(card_t *card, char *rankName) {
         strcpy(rankName, CARD_RANK_NAME[rank]);
         return SUCCESS;
     } else {
-        fprintf(stderr, "Failed to determine the rank of the card\n");
-        fprintf(stderr, "Provided card data: %d\n", card->data);
-        fprintf(stderr, "Deduced rank data: %d\n", rank);
+        fprintf(stderr, "getRankName: failed, rank is not valid.\n");
+        fprintf(stderr, "Provided card data: %d.\n", card->data);
+        fprintf(stderr, "Deduced rank data: %d.\n", rank);
         return FAILURE;
     }
 }

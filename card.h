@@ -32,11 +32,17 @@ typedef struct card_t
 
 bool isValidRank(uint8_t rank);
 bool isValidSuit(uint8_t suit);
+
 status_t createCardData(uint8_t rank, uint8_t suit, uint8_t *newData);
 status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard);
+status_t freeSingleCard(card_t *card);
+
 int8_t getRankData(card_t *card);
 int8_t getSuitData(card_t *card);
+
 status_t getSuitName(card_t *card, char *suitName);
 status_t getRankName(card_t *card, char *rankName);
+
+//status_t getCardScoreValue(card_t *card, uint8_t score);
 
 #endif // CARD_H
