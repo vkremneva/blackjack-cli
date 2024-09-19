@@ -72,16 +72,16 @@ status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
 
 status_t freeSingleCard(card_t *card) {
     if (card == NULL) {
-        fprintf(stderr, "freeSingleCard: card is NULL.\n");
+        fprintf(stderr, "freeSingleCard: failed, card is NULL.\n");
         return FAILURE;
     }
 
     if (card->next == NULL) {
         free(card);
-        fprintf(stderr, "freeSingleCard: card->next is NULL, free card success.\n");
+        fprintf(stderr, "freeSingleCard: success, card->next is NULL, memory freed.\n");
         return SUCCESS;
     } else {
-        fprintf(stderr, "freeSingleCard: card is not single.\n");
+        fprintf(stderr, "freeSingleCard: failed, card is not single.\n");
         return FAILURE;
     }
 }
