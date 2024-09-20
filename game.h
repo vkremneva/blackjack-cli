@@ -1,7 +1,8 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include "gamestate.h"
 
+void gamePlay();
 
-typedef struct game_t {
-} game_t;
-
-void gamePlay(game_t **game);
+#endif // GAME_H

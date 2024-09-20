@@ -2,7 +2,6 @@
 
 int main()
 {
-    game_t *head = NULL;
-    gamePlay(&head);
+    gamePlay();
     return 0;
 }
