@@ -1,6 +1,8 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include <string.h>
+
 #include "cardlist.h"
 #include "status.h"
 
@@ -30,10 +32,18 @@ typedef enum {
     PLAYER_WIN
 } nextAction_t;
 
+typedef enum {
+    INVALID,
+    QUIT,
+    YES,
+    NO
+} answer_t;
+
+answer_t questionYesNo(const char *answer);
+
 status_t initGame(gamestate_t **newState, nextAction_t *next);
 status_t endGame(gamestate_t **state, nextAction_t *next);
-
-//status_t betting(gamestate_t **state, nextAction_t *next);
+status_t betting(gamestate_t **state, nextAction_t *next);
 //status_t blackjackCheck(gamestate_t **state, nextAction_t *next);
 //status_t hitOrStand(gamestate_t **state, nextAction_t *next);
 //status_t dealerDraw(gamestate_t **state, nextAction_t *next);

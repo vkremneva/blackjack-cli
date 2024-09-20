@@ -32,15 +32,12 @@ status_t initGame(gamestate_t **newState, nextAction_t *next) {
     state->pot = 0;
     *newState = state;
 
-    //TODO change next to betting phase
-    *next = END_GAME;
-
     printf("\n\n");
     printf("╦ ╦╔═╗╦  ╔═╗╔═╗╔╦╗╔═╗  ╔╦╗╔═╗  ╔╗ ╦  ╔═╗╔═╗╦╔═ ╦╔═╗╔═╗╦╔═\n");
     printf("║║║║╣ ║  ║  ║ ║║║║║╣    ║ ║ ║  ╠╩╗║  ╠═╣║  ╠╩╗ ║╠═╣║  ╠╩╗\n");
     printf("╚╩╝╚═╝╩═╝╚═╝╚═╝╩ ╩╚═╝   ╩ ╚═╝  ╚═╝╩═╝╩ ╩╚═╝╩ ╩╚╝╩ ╩╚═╝╩ ╩\n\n\n");
-    printf("YOUR CASH: %d\n", state->cash);
 
+    *next = BETTING;
     return SUCCESS;
 }
 
@@ -89,7 +86,143 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
     return SUCCESS;
 }
 
-//status_t betting(gamestate_t **state, nextAction_t *next);
+answer_t questionYesNo(const char *answer) {
+    char yes[] = "yes";
+    char no[] = "no";
+    char exit[] = "quit";
+
+    if (strcmp(answer, yes) == 0) {
+        return YES;
+    } else if (strcmp(answer, no) == 0) {
+        return NO;
+    } else if (strcmp(answer, exit) == 0) {
+        return QUIT;
+    } else {
+        return INVALID;
+    }
+}
+
+status_t betting(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+
+    printf("\n");
+    printf("╔╗ ╔═╗╔╦╗╔╦╗╦╔╗╔╔═╗\n");
+    printf("╠╩╗║╣  ║  ║ ║║║║║ ╦\n");
+    printf("╚═╝╚═╝ ╩  ╩ ╩╝╚╝╚═╝\n\n");
+
+    printf("YOUR CASH: %d\n", tState->cash);
+    printf("POT: %d\n", tState->pot);
+
+    if (tState->pot == 0) {
+        if (tState->cash <= 10) {
+            printf("\n");
+            printf("╔═╗╔═╗╔═╗╔═╗\n");
+            printf("║ ║║ ║╠═╝╚═╗\n");
+            printf("╚═╝╚═╝╩  ╚═╝... ");
+            printf("LOOKS LIKE YOU'RE OUT OF CASH TO BET!\n");
+
+            *next = END_GAME;
+            return SUCCESS;
+        }
+    }
+
+    char answer[100];
+    answer_t result = INVALID;
+    bool bettingSuccess = false;
+
+    while (!bettingSuccess) {
+        printf("DO YOU WANT TO BET? please type \"yes\" or \"no\": ");
+        scanf("%s", answer);
+        printf("\n");
+        result = questionYesNo(answer);
+
+        switch (result) {
+            case INVALID: 
+                printf("Your answer is INVALID.\n");
+                printf("Please try again or type \"quit\" if you want to quit game.\n\n");
+                break;
+
+            case QUIT:
+                printf("YOU CHOSE TO QUIT THE GAME.\n");
+                bettingSuccess = true;
+                *next = END_GAME;
+                return SUCCESS;
+            
+            case NO: 
+                if (tState->pot != 0) {
+                    printf("YOU CHOSE NOT TO BET.\n");
+                    bettingSuccess = true;
+                    // TODO dont forget to change this to INITIAL_DEAL
+                    *next = END_GAME;
+                    return SUCCESS;
+                } else {
+                    printf("POT IS EMPTY, YOU HAVE TO BET!\n");
+                    printf("If you want to quit game, you can type \"quit\".\n\n");
+                }
+                break;
+            case YES: 
+                bettingSuccess = true;
+                break;
+        }
+    }
+
+    bool betAccepted = false;
+    int newBet = 0, valuesRead = 0;
+    char lineEnd = '\0';
+
+    printf("HOW MUCH DO YOU WANT TO BET?\n");
+    printf("Please note that you can only bet in multiples of 10.\n");
+    printf("For example: 10, 20, 70, 100, 120, etc.\n\n");
+
+    while (!betAccepted) {
+        printf("ENTER YOUR BET: ");
+        valuesRead = scanf("%d%c", &newBet, &lineEnd);
+        printf("\n");
+        
+        if ((valuesRead != 2) || (lineEnd != '\n')) {
+            printf("YOU SHOULD USE ONLY NUMBERS TO ENTER YOUR BET!\n\n");
+            scanf("%*[^\n]");
+            newBet = 0;
+            lineEnd = '\0';
+
+        } else if (newBet < 0) {
+            printf("NO YOU CANNOT BET NEGATIVE NUMBERS\n\n");
+
+        } else if (newBet == 0) {
+            if (tState->pot != 0) {
+                printf("YOU CHOSE TO BET 0 CASH.\n");
+                printf("YOUR BET IS ACCEPTED:\n");
+                betAccepted = true;
+                // TODO dont forget to change this to INITIAL_DEAL
+                *next = END_GAME;
+                return SUCCESS;
+            } else {
+                printf("POT IS EMPTY, YOU HAVE TO BET!\n\n");
+            }
+
+        } else if (newBet >= tState->cash) {
+            printf("YOU DON'T HAVE ENOUGH CASH\n\n");
+
+        } else if (newBet % 10 != 0) {
+            printf("YOU HAVE TO BET IN MULTIPLES OF 10.\n\n");
+
+        } else {
+            printf("BET %d IS ACCEPTED\n", newBet);
+            betAccepted = true;
+            tState->pot = newBet;
+            tState->cash -= newBet;
+            printf("Remaining in cash: %d\n", tState->cash);
+        }
+    }
+    
+    // TODO don't forget to change to INITIAL_DEAL
+    *next = END_GAME;
+    return SUCCESS;
+}
 //status_t blackjackCheck(gamestate_t **state, nextAction_t *next);
 //status_t hitOrStand(gamestate_t **state, nextAction_t *next);
 //status_t dealerDraw(gamestate_t **state, nextAction_t *next);
