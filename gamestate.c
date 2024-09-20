@@ -9,38 +9,36 @@ status_t initGame(gamestate_t **newState, nextAction_t *next) {
 
     state->deck = NULL;
     status_t status = initFullDeck(&state->deck);
-    if (status == SUCCESS) {
-        fprintf(stderr, "initGame: Success creating deck\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "initGame: FAILURE creating deck\n");
+        return FAILURE;
     }
 
     state->playerHand = NULL;
     status = initEmptyDeck(&state->playerHand);
-    if (status == SUCCESS) {
-        fprintf(stderr, "initGame: Success creating playerHand\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "initGame: FAILURE creating playerHand\n");
+        return FAILURE;
     }
 
     state->dealerHand = NULL;
     status = initEmptyDeck(&state->dealerHand);
-    if (status == SUCCESS) {
-        fprintf(stderr, "initGame: Success creating dealerHand\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "initGame: FAILURE creating dealerHand\n");
+        return FAILURE;
     }
 
     state->cash = 0;
-    fprintf(stderr, "initGame: cash %d\n", state->cash);
-
     state->pot = 0;
-    fprintf(stderr, "initGame: pot %d\n", state->pot);
-
     *newState = state;
 
+    //TODO change next to betting phase
     *next = END_GAME;
-    fprintf(stderr, "initGame: NEXT %d\n", *next);
+
+    printf("\n\n");
+    printf("╦ ╦╔═╗╦  ╔═╗╔═╗╔╦╗╔═╗  ╔╦╗╔═╗  ╔╗ ╦  ╔═╗╔═╗╦╔═ ╦╔═╗╔═╗╦╔═\n");
+    printf("║║║║╣ ║  ║  ║ ║║║║║╣    ║ ║ ║  ╠╩╗║  ╠═╣║  ╠╩╗ ║╠═╣║  ╠╩╗\n");
+    printf("╚╩╝╚═╝╩═╝╚═╝╚═╝╩ ╩╚═╝   ╩ ╚═╝  ╚═╝╩═╝╩ ╩╚═╝╩ ╩╚╝╩ ╩╚═╝╩ ╩\n\n\n");
 
     return SUCCESS;
 }

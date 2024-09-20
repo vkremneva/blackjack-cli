@@ -9,10 +9,8 @@ void gamePlay() {
     gamestate_t *gamestate = NULL;
 
     status_t status = (*action[INIT_GAME])(&gamestate, &next);
-    if (status == SUCCESS) {
-        fprintf(stderr, "INIT_GAME PHASE SUCCESS\n\n\n");
-    } else {
-        fprintf(stderr, "INIT_GAME PHASE FAILURE\n\n\n");
+    if (status == FAILURE) {
+        fprintf(stderr, "INIT_GAME PHASE FAILURE\n");
         return;
     }
 

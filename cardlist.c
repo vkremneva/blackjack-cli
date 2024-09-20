@@ -33,7 +33,6 @@ status_t popFront(cardlist_t **deck) {
     tDeck->head = tCard->next;
 
     if (tDeck->len != 0) {
-        fprintf(stderr, "popFront: changing len = %zu.\n", tDeck->len);
         tDeck->len -= 1;
     } else {
         fprintf(stderr, "popFront: FAILED, len is already 0.\n");
@@ -42,9 +41,7 @@ status_t popFront(cardlist_t **deck) {
 
     tCard->next = NULL;
     status_t status = freeSingleCard(&tCard);
-    if (status == SUCCESS) {
-        fprintf(stderr, "popFront: freeSingleCard success.\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "popFront: freeSingleCard FAILURE.\n");
         return FAILURE;
     }
@@ -62,7 +59,6 @@ status_t initEmptyDeck(cardlist_t **newDeck) {
 
     deck->head = NULL;
     deck->len = 0;
-    fprintf(stderr, "initEmptyDeck: success, len = %zu.\n", deck->len);
 
     *newDeck = deck; 
     return SUCCESS;
@@ -71,32 +67,36 @@ status_t initEmptyDeck(cardlist_t **newDeck) {
 status_t initFullDeck(cardlist_t **newDeck) {
     cardlist_t *deck = NULL;
     status_t status = initEmptyDeck(&deck);
-    if (status == SUCCESS) {
-        fprintf(stderr, "initFullDeck: empty deck creation success.\n");
-    } else {   
-        fprintf(stderr, "initFullDeck: empty deck creation FAILURE.\n");
+    if (status == FAILURE) {
         return FAILURE;
     }
 
-    //TODO all 52 cards
     card_t *card = NULL;
-    status = createSingleCard(12, 0x08, &card);
-    if (status == SUCCESS) {
-        fprintf(stderr, "initFullDeck: card creation success.\n");
-    } else {   
-        fprintf(stderr, "initFullDeck: card creation FAILURE.\n");
-        return FAILURE;
-    }
+    for (size_t suit = 0; suit < CARD_SUIT_AMOUNT; ++suit) {
+        for (size_t rank = 1; rank < CARD_RANK_AMOUNT; ++rank) {
+            // rank=1 because in CARD_RANK_NAME[] actual names start from ind 1
+            card = NULL;
+            status = createSingleCard(rank, CARD_SUIT_DATA[suit], &card);
+            if (status == FAILURE) {   
+                fprintf(stderr, "initFullDeck: FAILURE, card suit=%zu, rank=%zu\n", suit, rank);
+                status = freeDeck(&deck);
+                if (status == FAILURE) {
+                    fprintf(stderr, "initFullDeck: createSingleCard failure: freeDeck FAILURE\n");
+                }
+                return FAILURE;
+            }
 
-    status = pushFront(&deck, &card);
-    if (status == SUCCESS) {
-        fprintf(stderr, "initFullDeck: pushing front success.\n");
-    } else {   
-        fprintf(stderr, "initFullDeck: pushing front FAILURE.\n");
-        return FAILURE;
+            status = pushFront(&deck, &card);
+            if (status == FAILURE) {  
+                fprintf(stderr, "initFullDeck: pushing front FAILURE.\n");
+                status = freeDeck(&deck);
+                if (status == FAILURE) {
+                    fprintf(stderr, "initFullDeck: pushFront failure: freeDeck FAILURE\n");
+                }
+                return FAILURE;
+            }
+        }
     }
-
-    fprintf(stderr, "initFullDeck: success, len = %zu.\n\n", deck->len);
 
     *newDeck = deck; 
     return SUCCESS;
@@ -112,21 +112,15 @@ status_t freeDeck(cardlist_t **deck) {
     status_t status = SUCCESS;
 
     while (tDeck->head != NULL) {
-        fprintf(stderr, "freeDeck: head is not null, len = %zu.\n", tDeck->len);
-
         status = popFront(&tDeck);
-        if (status == SUCCESS) {
-            fprintf(stderr, "freeDeck: popFront success.\n");
-        } else {
+        if (status == FAILURE) {
             fprintf(stderr, "freeDeck: popFront FAILURE.\n");
             return FAILURE;
         }
     }
-    fprintf(stderr, "freeDeck: head is NULL, len = %zu.\n", tDeck->len);
 
     free(*deck);
     *deck = NULL;
-    fprintf(stderr, "freeDeck: success, memory freed.\n\n");
     return SUCCESS;
 }
 
