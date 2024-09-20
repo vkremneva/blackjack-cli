@@ -70,14 +70,15 @@ status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
     return SUCCESS;
 }
 
-status_t freeSingleCard(card_t *card) {
-    if (card == NULL) {
+status_t freeSingleCard(card_t **card) {
+    if (*card == NULL) {
         fprintf(stderr, "freeSingleCard: failed, card is NULL.\n");
         return FAILURE;
     }
 
-    if (card->next == NULL) {
-        free(card);
+    if ((*card)->next == NULL) {
+        free(*card);
+        *card = NULL;
         fprintf(stderr, "freeSingleCard: success, card->next is NULL, memory freed.\n");
         return SUCCESS;
     } else {

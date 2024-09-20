@@ -35,7 +35,7 @@ bool isValidSuit(uint8_t suit);
 
 status_t createCardData(uint8_t rank, uint8_t suit, uint8_t *newData);
 status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard);
-status_t freeSingleCard(card_t *card);
+status_t freeSingleCard(card_t **card);
 
 int8_t getRankData(card_t *card);
 int8_t getSuitData(card_t *card);
