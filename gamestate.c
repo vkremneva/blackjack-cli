@@ -28,7 +28,7 @@ status_t initGame(gamestate_t **newState, nextAction_t *next) {
         return FAILURE;
     }
 
-    state->cash = 0;
+    state->cash = 1000;
     state->pot = 0;
     *newState = state;
 
@@ -39,6 +39,7 @@ status_t initGame(gamestate_t **newState, nextAction_t *next) {
     printf("╦ ╦╔═╗╦  ╔═╗╔═╗╔╦╗╔═╗  ╔╦╗╔═╗  ╔╗ ╦  ╔═╗╔═╗╦╔═ ╦╔═╗╔═╗╦╔═\n");
     printf("║║║║╣ ║  ║  ║ ║║║║║╣    ║ ║ ║  ╠╩╗║  ╠═╣║  ╠╩╗ ║╠═╣║  ╠╩╗\n");
     printf("╚╩╝╚═╝╩═╝╚═╝╚═╝╩ ╩╚═╝   ╩ ╚═╝  ╚═╝╩═╝╩ ╩╚═╝╩ ╩╚╝╩ ╩╚═╝╩ ╩\n\n\n");
+    printf("YOUR CASH: %d\n", state->cash);
 
     return SUCCESS;
 }
@@ -75,9 +76,16 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
         return FAILURE;
     }
 
+    printf("\n\nYOUR CASH: %d\n", tState->cash);
+    printf("╔═╗╔═╗╔╦╗╔═╗  ╔═╗╦  ╦╔═╗╦═╗\n");
+    printf("║ ╦╠═╣║║║║╣   ║ ║╚╗╔╝║╣ ╠╦╝\n");
+    printf("╚═╝╩ ╩╩ ╩╚═╝  ╚═╝ ╚╝ ╚═╝╩╚═\n\n");
+
     free(*state);
     *state = NULL;
     *next = END_GAME;
+
+
     return SUCCESS;
 }
 
