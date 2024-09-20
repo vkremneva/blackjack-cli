@@ -2,6 +2,7 @@
 #define CARDLIST_H
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "card.h"
 #include "status.h"
@@ -20,15 +21,14 @@ typedef struct cardlist_t
 
 } cardlist_t;
 
-status_t initEmptyDeck(cardlist_t **deck);
-status_t initFullDeck(cardlist_t **deck);
+status_t pushFront(cardlist_t **deck, card_t **card);
+status_t popFront(cardlist_t **deck);
+//status_t popByInd(cardlist_t **deck, card_t *card, size_t ind);
 
-status_t pushFront(cardlist_t **deck, card_t *card);
-status_t popFront(cardlist_t **deck, card_t *card);
-status_t popByInd(cardlist_t **deck, card_t *card, size_t ind);
-
-status_t getDeckScoreValue(cardlist_t **deck, int8_t *score);
-
+status_t initEmptyDeck(cardlist_t **newDeck);
+status_t initFullDeck(cardlist_t **newDeck);
 status_t freeDeck(cardlist_t **deck);
+
+//status_t getDeckScoreValue(cardlist_t **deck, int8_t *score);
 
 #endif // CARDLIST_H
