@@ -25,11 +25,12 @@ typedef enum {
     INITIAL_DEAL,
     BLACKJACK_CHECK,
     HIT_OR_STAND,
-//    DEALER_DRAW,
+    DEALER_DRAW,
 //    RESET_PHASE,
-//    DEALER_BUST,
+    DEALER_BUST,
+    DEALER_WIN,
     BLACKJACK,
-//    TIE,
+    TIE,
     PLAYER_LOSE,
     PLAYER_WIN
 } nextAction_t;
@@ -52,13 +53,14 @@ status_t betting(gamestate_t **state, nextAction_t *next);
 status_t initialDeal(gamestate_t **state, nextAction_t *next);
 status_t blackjackCheck(gamestate_t **state, nextAction_t *next);
 status_t hitOrStand(gamestate_t **state, nextAction_t *next);
-//status_t dealerDraw(gamestate_t **state, nextAction_t *next);
+status_t dealerDraw(gamestate_t **state, nextAction_t *next);
 //status_t resetPhase(gamestate_t **state, nextAction_t *next);
 
-//status_t dealerBust(gamestate_t **state, nextAction_t *next);
+status_t dealerBust(gamestate_t **state, nextAction_t *next);
+status_t dealerWin(gamestate_t **state, nextAction_t *next);
 status_t blackJack(gamestate_t **state, nextAction_t *next);
-//status_t tie(gamestate_t **state, nextAction_t *next);
+status_t tie(gamestate_t **state, nextAction_t *next);
 status_t playerLose(gamestate_t **state, nextAction_t *next);
-//status_t playerWin(gamestate_t **state, nextAction_t *next);
+status_t playerWin(gamestate_t **state, nextAction_t *next);
 
 #endif // GAMESTATE_H

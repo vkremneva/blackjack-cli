@@ -334,8 +334,7 @@ status_t hitOrStand(gamestate_t **state, nextAction_t *next) {
                 break;
             case STAND: 
                 printf("YOU CHOSE TO STAND\n");
-                // TODO don't forget to change to DEALER_DRAW
-                *next = END_GAME;
+                *next = DEALER_DRAW;
                 return SUCCESS;
             case QUIT:
                 printf("YOU CHOSE TO QUIT THE GAME.\n");
@@ -365,10 +364,107 @@ status_t hitOrStand(gamestate_t **state, nextAction_t *next) {
    *next = END_GAME;
    return SUCCESS;
 }
-//status_t dealerDraw(gamestate_t **state, nextAction_t *next);
+
+status_t dealerDraw(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+    const uint8_t DEALER_THRESHOLD = 17;
+
+    printf("\n");
+    printf("╔╦╗╔═╗╔═╗╦  ╔═╗╦═╗  ╔╦╗╦═╗╔═╗╦ ╦\n");
+    printf(" ║║║╣ ╠═╣║  ║╣ ╠╦╝   ║║╠╦╝╠═╣║║║\n");
+    printf("═╩╝╚═╝╩ ╩╩═╝╚═╝╩╚═  ═╩╝╩╚═╩ ╩╚╩╝\n\n");
+
+    uint8_t dealerScore = 0, playerScore = 0;
+    status_t status = INIT;
+
+    status = getCardlistScoreValue(&tState->playerHand, &playerScore);
+    if (status == FAILURE) {
+        *next = END_GAME;
+        return FAILURE;
+    }
+
+    while (true) {
+        status = getCardlistScoreValue(&tState->dealerHand, &dealerScore);
+        if (status == FAILURE) {
+            *next = END_GAME;
+            return FAILURE;
+        }
+        if (dealerScore >= DEALER_THRESHOLD) {
+            if (dealerScore > 21) {
+                *next = DEALER_BUST;
+                return SUCCESS;
+            } else if (dealerScore == playerScore) {
+                *next = TIE;
+                return SUCCESS;
+            } else if (dealerScore > playerScore) {
+                *next = DEALER_WIN;
+                return SUCCESS;
+            } else {
+                *next = PLAYER_WIN;
+                return SUCCESS;
+            }
+        } else {
+            status = pullRandomCard(&tState->deck, &tState->dealerHand);
+            if (status == FAILURE) {
+                *next = END_GAME;
+                return FAILURE;
+            }
+            printf("DEALER PULLED 1 CARD.\n");
+        }
+    }
+
+}
 //status_t resetPhase(gamestate_t **state, nextAction_t *next);
 
-//status_t dealerBust(gamestate_t **state, nextAction_t *next);
+status_t dealerBust(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        *next = END_GAME;
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+
+    printf("\n");
+    printf("╔╦╗╔═╗╔═╗╦  ╔═╗╦═╗  ╔╗ ╦ ╦╔═╗╔╦╗\n");
+    printf(" ║║║╣ ╠═╣║  ║╣ ╠╦╝  ╠╩╗║ ║╚═╗ ║ \n");
+    printf("═╩╝╚═╝╩ ╩╩═╝╚═╝╩╚═  ╚═╝╚═╝╚═╝ ╩ \n\n");
+
+    printf("DEALER LOST, HIS SCORE IS OVER 21\n");
+    uint32_t prize = tState->pot * 2; 
+    tState->cash += prize;
+    tState->pot = 0;
+    printf("YOUR PRIZE: %d\n", prize);
+    printf("YOUR CASH NOW: %d\n", tState->cash);
+
+    // TODO change to RESET
+    *next = END_GAME;
+    return SUCCESS;
+}
+
+status_t dealerWin(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        *next = END_GAME;
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+
+    printf("\n");
+    printf("╦ ╦╔═╗╦ ╦  ╦  ╔═╗╔═╗╔╦╗\n");
+    printf("╚╦╝║ ║║ ║  ║  ║ ║╚═╗ ║ \n");
+    printf(" ╩ ╚═╝╚═╝  ╩═╝╚═╝╚═╝ ╩ \n\n");
+
+    printf("YOUR CARDS:\n");
+    printCardlist(&tState->playerHand);
+    printf("\nDEALER'S HAND:\n");
+    printCardlist(&tState->dealerHand);
+
+// TODO change to RESET
+    *next = END_GAME;    
+    return SUCCESS;
+}
+
 status_t blackJack(gamestate_t **state, nextAction_t *next) {
     if (*state == NULL) {
         fprintf(stderr, "blackJack: gamestate_t state is NULL\n");
@@ -397,12 +493,31 @@ status_t blackJack(gamestate_t **state, nextAction_t *next) {
     *next = END_GAME;
     return SUCCESS;
 }
-//status_t tie(gamestate_t **state, nextAction_t *next);
+
+status_t tie(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        *next = END_GAME;
+        return FAILURE;
+    }
+    
+    printf("\n");
+    printf("╔╦╗╦╔═╗\n");
+    printf(" ║ ║║╣ \n");
+    printf(" ╩ ╩╚═╝\n\n");
+
+    printf("YOU BOTH HAVE THE SAME SCORE\n");
+    //TODO change to RESET
+    *next = END_GAME;
+    return SUCCESS;
+}
+
 status_t playerLose(gamestate_t **state, nextAction_t *next) {
     if (*state == NULL) {
+        *next = END_GAME;
         return FAILURE;
     }
     gamestate_t *tState = *state;
+
     printf("\n");
     printf("╔╗ ╦ ╦╔═╗╔╦╗\n");
     printf("╠╩╗║ ║╚═╗ ║ \n");
@@ -415,4 +530,25 @@ status_t playerLose(gamestate_t **state, nextAction_t *next) {
     *next = END_GAME;
     return SUCCESS;
 }
-//status_t playerWin(gamestate_t **state, nextAction_t *next);
+
+status_t playerWin(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        *next = END_GAME;
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+
+    printf("\n");
+    printf("╦ ╦╔═╗╦ ╦  ╦ ╦╦╔╗╔\n");
+    printf("╚╦╝║ ║║ ║  ║║║║║║║\n");
+    printf(" ╩ ╚═╝╚═╝  ╚╩╝╩╝╚╝\n\n");
+
+    tState->cash += tState->pot;
+    tState->pot = 0;
+    printf("THE POT IS YOURS!\n");
+    printf("YOUR CASH NOW: %d\n", tState->cash);
+
+    // TODO RESET
+    *next = END_GAME;
+    return SUCCESS;
+}
