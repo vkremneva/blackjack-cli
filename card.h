@@ -15,6 +15,7 @@ extern const uint8_t CARD_SUIT_DATA[];
 extern const char* CARD_RANK_NAME[];
 extern const size_t CARD_SUIT_AMOUNT;
 extern const size_t CARD_RANK_AMOUNT;
+extern const size_t MAX_NAME_LENGTH;
 
 /**
  * @brief A structure to represent an individual card as a node in deck.
@@ -42,6 +43,8 @@ int8_t getSuitData(card_t *card);
 
 status_t getSuitName(card_t *card, char *suitName);
 status_t getRankName(card_t *card, char *rankName);
+
+void printCard(card_t *card);
 
 //status_t getCardScoreValue(card_t *card, uint8_t score);
 

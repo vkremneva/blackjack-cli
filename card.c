@@ -23,6 +23,8 @@ const char* CARD_RANK_NAME[] = {
 const size_t CARD_SUIT_AMOUNT = 4;
 const size_t CARD_RANK_AMOUNT = 14;
 
+const size_t MAX_NAME_LENGTH = 10;
+
 bool isValidRank(uint8_t rank) {
     return ((rank < CARD_RANK_AMOUNT) && (rank > 0));
 }
@@ -140,6 +142,26 @@ status_t getRankName(card_t *card, char *rankName) {
         fprintf(stderr, "Deduced rank data: %d.\n", rank);
         return FAILURE;
     }
+}
+
+void printCard(card_t *card) {
+    if (card == NULL) {
+        fprintf(stderr, "printCard: FAILED, card is empty\n");
+        return;
+    } 
+    char rankName[MAX_NAME_LENGTH];
+    char suitName[MAX_NAME_LENGTH];
+
+    status_t status = getRankName(card, rankName);
+    if (status == FAILURE) {
+        return;
+    }
+    status = getSuitName(card, suitName);
+    if (status == FAILURE) {
+        return;
+    }
+
+    printf("%s of %s\n", rankName, suitName);
 }
 
 /*
