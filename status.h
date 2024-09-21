@@ -6,11 +6,11 @@
  */
 typedef enum
 {
+    INIT,
     SUCCESS,        /**< Operation completed successfully. */
     FAILURE,        /**< Operation failed. */
     INPUT_SUCCESS,  /**< Input was successfully read and stored in the buffer. */
     INPUT_FAILURE,   /**< An error occurred while reading the input. */
-    EXIT
 } status_t;
 
 #endif // STATUS_H
