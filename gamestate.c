@@ -277,18 +277,66 @@ status_t initialDeal(gamestate_t **state, nextAction_t *next) {
     printf("?????????? you can't see this one\n");
     printf("\n");
 
-    // TODO don't forget to change to BLACKJACK_CHECK
-    *next = END_GAME;
+    *next = BLACKJACK_CHECK;
     return SUCCESS;
 }
 
-//status_t blackjackCheck(gamestate_t **state, nextAction_t *next);
+status_t blackjackCheck(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+    cardlist_t *playerHand = tState->playerHand;
+
+    uint8_t score = 0;
+    status_t status = getCardlistScoreValue(&playerHand, &score);
+    if (status == FAILURE) {
+        return FAILURE;
+    }
+
+    if (score == 21) {
+        *next = BLACKJACK;
+        return SUCCESS;
+    }
+
+    // TODO don't forget to change to hit or stand
+    *next = END_GAME;
+    return SUCCESS;
+}
 //status_t hitOrStand(gamestate_t **state, nextAction_t *next);
 //status_t dealerDraw(gamestate_t **state, nextAction_t *next);
 //status_t resetPhase(gamestate_t **state, nextAction_t *next);
 
 //status_t dealerBust(gamestate_t **state, nextAction_t *next);
-//status_t blackJack(gamestate_t **state, nextAction_t *next);
+status_t blackJack(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        fprintf(stderr, "blackJack: gamestate_t state is NULL\n");
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+
+    printf("\n");
+    printf("██████╗ ██╗      █████╗  ██████╗██╗  ██╗     ██╗ █████╗  ██████╗██╗  ██╗\n");
+    printf("██╔══██╗██║     ██╔══██╗██╔════╝██║ ██╔╝     ██║██╔══██╗██╔════╝██║ ██╔╝\n");
+    printf("██████╔╝██║     ███████║██║     █████╔╝      ██║███████║██║     █████╔╝ \n");
+    printf("██╔══██╗██║     ██╔══██║██║     ██╔═██╗ ██   ██║██╔══██║██║     ██╔═██╗ \n");
+    printf("██████╔╝███████╗██║  ██║╚██████╗██║  ██╗╚█████╔╝██║  ██║╚██████╗██║  ██╗\n");
+    printf("╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝\n\n");
+
+    printf("YOUR SCORE: 21\n");
+    printf("%d IN POT\n", tState->pot);
+
+    uint32_t prize = (tState->pot * 2) + (tState->pot / 2); 
+    tState->cash += prize;
+    tState->pot = 0;
+    printf("YOUR PRIZE: %d\n", prize);
+    printf("YOUR CASH NOW: %d\n", tState->cash);
+
+    //TODO don't forget to change to RESET
+    *next = END_GAME;
+    return SUCCESS;
+}
 //status_t tie(gamestate_t **state, nextAction_t *next);
 //status_t playerLose(gamestate_t **state, nextAction_t *next);
 //status_t playerWin(gamestate_t **state, nextAction_t *next);
