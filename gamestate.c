@@ -1,5 +1,21 @@
 #include "gamestate.h"
 
+answer_t questionYesNo(const char *answer) {
+    char yes[] = "yes";
+    char no[] = "no";
+    char exit[] = "quit";
+
+    if (strcmp(answer, yes) == 0) {
+        return YES;
+    } else if (strcmp(answer, no) == 0) {
+        return NO;
+    } else if (strcmp(answer, exit) == 0) {
+        return QUIT;
+    } else {
+        return INVALID;
+    }
+}
+
 status_t initGame(gamestate_t **newState, nextAction_t *next) {
     gamestate_t *state = (gamestate_t *)malloc(sizeof(gamestate_t));
     if (state == NULL) {
@@ -50,25 +66,19 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
     gamestate_t *tState = *state;
 
     status_t status = freeDeck(&(tState->deck));
-    if (status == SUCCESS) {
-        fprintf(stderr, "endGame: Success freeing deck.\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "endGame: FAILURE freeing deck.\n");
         return FAILURE;
     }
 
     status = freeDeck(&(tState->playerHand));
-    if (status == SUCCESS) {
-        fprintf(stderr, "endGame: Success freeing playerHand.\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "endGame: FAILURE freeing playerHand.\n");
         return FAILURE;
     }
 
     status = freeDeck(&(tState->dealerHand));
-    if (status == SUCCESS) {
-        fprintf(stderr, "endGame: Success freeing dealerHand.\n");
-    } else {
+    if (status == FAILURE) {
         fprintf(stderr, "endGame: FAILURE freeing dealerHand.\n");
         return FAILURE;
     }
@@ -84,22 +94,6 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
 
 
     return SUCCESS;
-}
-
-answer_t questionYesNo(const char *answer) {
-    char yes[] = "yes";
-    char no[] = "no";
-    char exit[] = "quit";
-
-    if (strcmp(answer, yes) == 0) {
-        return YES;
-    } else if (strcmp(answer, no) == 0) {
-        return NO;
-    } else if (strcmp(answer, exit) == 0) {
-        return QUIT;
-    } else {
-        return INVALID;
-    }
 }
 
 status_t betting(gamestate_t **state, nextAction_t *next) {
@@ -156,8 +150,7 @@ status_t betting(gamestate_t **state, nextAction_t *next) {
                 if (tState->pot != 0) {
                     printf("YOU CHOSE NOT TO BET.\n");
                     bettingSuccess = true;
-                    // TODO dont forget to change this to INITIAL_DEAL
-                    *next = END_GAME;
+                    *next = INITIAL_DEAL;
                     return SUCCESS;
                 } else {
                     printf("POT IS EMPTY, YOU HAVE TO BET!\n");
@@ -197,8 +190,7 @@ status_t betting(gamestate_t **state, nextAction_t *next) {
                 printf("YOU CHOSE TO BET 0 CASH.\n");
                 printf("YOUR BET IS ACCEPTED:\n");
                 betAccepted = true;
-                // TODO dont forget to change this to INITIAL_DEAL
-                *next = END_GAME;
+                *next = INITIAL_DEAL;
                 return SUCCESS;
             } else {
                 printf("POT IS EMPTY, YOU HAVE TO BET!\n\n");
@@ -219,10 +211,77 @@ status_t betting(gamestate_t **state, nextAction_t *next) {
         }
     }
     
-    // TODO don't forget to change to INITIAL_DEAL
+    *next = INITIAL_DEAL;
+    return SUCCESS;
+}
+
+status_t initialDeal(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+
+    printf("\n");
+    printf("╦╔╗╔╦╔╦╗╦╔═╗╦    ╔╦╗╔═╗╔═╗╦ \n");
+    printf("║║║║║ ║ ║╠═╣║     ║║║╣ ╠═╣║ \n");
+    printf("╩╝╚╝╩ ╩ ╩╩ ╩╩═╝  ═╩╝╚═╝╩ ╩╩═╝\n\n");
+
+    card_t *card = NULL;
+    size_t cardsAmount = tState->deck->len;
+
+    printf("YOU PULLED 2 CARDS:\n");
+    status_t status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
+    if (status == FAILURE) { 
+        return FAILURE; 
+    }
+    status = pushFront(&tState->playerHand, &card);
+    if (status == FAILURE) { 
+        return FAILURE; 
+    }
+    printCard(card);
+
+    card = NULL;
+    status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
+    if (status == FAILURE) {
+        return FAILURE;
+    }
+    status = pushFront(&tState->playerHand, &card);
+    if (status == FAILURE) {
+        return FAILURE; 
+    }
+    printCard(card);
+    printf("\n");
+
+    printf("DEALER PULLED 2 CARDS:\n");
+    card = NULL;
+    status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
+    if (status == FAILURE) { 
+        return FAILURE; 
+    }
+    status = pushFront(&tState->dealerHand, &card);
+    if (status == FAILURE) { 
+        return FAILURE; 
+    }
+    printCard(card);
+
+    card = NULL;
+    status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
+    if (status == FAILURE) {
+        return FAILURE;
+    }
+    status = pushFront(&tState->dealerHand, &card);
+    if (status == FAILURE) {
+        return FAILURE; 
+    }
+    printf("?????????? you can't see this one\n");
+    printf("\n");
+
+    // TODO don't forget to change to BLACKJACK_CHECK
     *next = END_GAME;
     return SUCCESS;
 }
+
 //status_t blackjackCheck(gamestate_t **state, nextAction_t *next);
 //status_t hitOrStand(gamestate_t **state, nextAction_t *next);
 //status_t dealerDraw(gamestate_t **state, nextAction_t *next);
