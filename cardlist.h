@@ -29,6 +29,6 @@ status_t initEmptyDeck(cardlist_t **newDeck);
 status_t initFullDeck(cardlist_t **newDeck);
 status_t freeDeck(cardlist_t **deck);
 
-//status_t getDeckScoreValue(cardlist_t **deck, int8_t *score);
+status_t getCardlistScoreValue(cardlist_t **deck, uint8_t *score);
 
 #endif // CARDLIST_H

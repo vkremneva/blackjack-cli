@@ -64,6 +64,7 @@ status_t popByInd(cardlist_t **deck, card_t **card, size_t ind) {
         *card = tDeck->head;
         tDeck->head = tDeck->head->next;
         tDeck->len -= 1;
+        return SUCCESS;
     }
 
     card_t *prevCard = tDeck->head;
@@ -159,5 +160,29 @@ status_t freeDeck(cardlist_t **deck) {
     return SUCCESS;
 }
 
-//status_t popByInd(cardlist_t **deck, card_t *card, size_t ind);
-//status_t getDeckScoreValue(cardlist_t **deck, int8_t *score);
+status_t getCardlistScoreValue(cardlist_t **deck, uint8_t *score) {
+    if (deck == NULL) {
+        return FAILURE;
+    }
+
+    cardlist_t *tDeck = *deck;
+    card_t *tmpCard = tDeck->head;
+    uint8_t cardScore = 0;
+    *score = 0;
+    bool ace = false;
+    status_t status = INIT;
+    for (size_t i = 0; i < tDeck->len; ++i) {
+        status = getCardScoreValue(tmpCard, &cardScore, &ace);
+        if (status == FAILURE) {
+            return FAILURE;
+        }
+        *score += cardScore;
+        tmpCard = tmpCard->next;
+    }
+
+    if ((ace == true) && (*score + 10 <= 21)) {
+        *score += 10;
+    } 
+
+    return SUCCESS;
+}
