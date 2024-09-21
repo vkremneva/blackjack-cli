@@ -22,8 +22,8 @@ typedef struct cardlist_t
 } cardlist_t;
 
 status_t pushFront(cardlist_t **deck, card_t **card);
-status_t popFront(cardlist_t **deck);
-//status_t popByInd(cardlist_t **deck, card_t *card, size_t ind);
+status_t popFront(cardlist_t **deck); //TODO return value
+status_t popByInd(cardlist_t **deck, card_t **card, size_t ind);
 
 status_t initEmptyDeck(cardlist_t **newDeck);
 status_t initFullDeck(cardlist_t **newDeck);

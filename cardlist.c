@@ -27,10 +27,8 @@ status_t popFront(cardlist_t **deck) {
     }
 
     cardlist_t *tDeck = *deck;
-    card_t *tCard = NULL;
-
-    tCard = tDeck->head;
-    tDeck->head = tCard->next;
+    card_t *tmpCard = tDeck->head;
+    tDeck->head = tmpCard->next;
 
     if (tDeck->len != 0) {
         tDeck->len -= 1;
@@ -39,14 +37,51 @@ status_t popFront(cardlist_t **deck) {
         return FAILURE;
     }
 
-    tCard->next = NULL;
-    status_t status = freeSingleCard(&tCard);
+    tmpCard->next = NULL;
+    status_t status = freeSingleCard(&tmpCard);
     if (status == FAILURE) {
         fprintf(stderr, "popFront: freeSingleCard FAILURE.\n");
         return FAILURE;
     }
-    tCard = NULL;
+    tmpCard = NULL;
 
+    return SUCCESS;
+}
+
+status_t popByInd(cardlist_t **deck, card_t **card, size_t ind) {
+    if (deck == NULL) {
+        fprintf(stderr, "popByInd: FAILED, deck is NULL.\n");
+        return FAILURE;
+    }
+    cardlist_t *tDeck = *deck;
+
+    if (ind >= tDeck->len) {
+        fprintf(stderr, "popByInd: FAILED, index is out of bounds.\n");
+        return FAILURE;
+    }
+
+    if (ind == 0) {
+        *card = tDeck->head;
+        tDeck->head = tDeck->head->next;
+        tDeck->len -= 1;
+    }
+
+    card_t *prevCard = tDeck->head;
+    size_t prevCardInd = 0;
+
+    while (prevCardInd != ind - 1) {
+        prevCard = prevCard->next;
+        prevCardInd++;
+    }    
+    
+    *card = prevCard->next;
+
+    prevCard->next = prevCard->next->next;
+    tDeck->len -= 1;
+
+    card_t *tCard = *card;
+    tCard->next = NULL;
+    
     return SUCCESS;
 }
 
