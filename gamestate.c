@@ -3,13 +3,29 @@
 answer_t questionYesNo(const char *answer) {
     char yes[] = "yes";
     char no[] = "no";
-    char exit[] = "quit";
+    char quit[] = "quit";
 
     if (strcmp(answer, yes) == 0) {
         return YES;
     } else if (strcmp(answer, no) == 0) {
         return NO;
-    } else if (strcmp(answer, exit) == 0) {
+    } else if (strcmp(answer, quit) == 0) {
+        return QUIT;
+    } else {
+        return INVALID;
+    }
+}
+
+answer_t questionHitStand(const char *answer) {
+    char hit[] = "hit";
+    char stand[] = "stand";
+    char quit[] = "quit";
+
+    if (strcmp(answer, hit) == 0) {
+        return HIT;
+    } else if (strcmp(answer, stand) == 0) {
+        return STAND;
+    } else if (strcmp(answer, quit) == 0) {
         return QUIT;
     } else {
         return INVALID;
@@ -160,6 +176,8 @@ status_t betting(gamestate_t **state, nextAction_t *next) {
             case YES: 
                 bettingSuccess = true;
                 break;
+            default: 
+                break;
         }
     }
 
@@ -227,52 +245,29 @@ status_t initialDeal(gamestate_t **state, nextAction_t *next) {
     printf("║║║║║ ║ ║╠═╣║     ║║║╣ ╠═╣║ \n");
     printf("╩╝╚╝╩ ╩ ╩╩ ╩╩═╝  ═╩╝╚═╝╩ ╩╩═╝\n\n");
 
-    card_t *card = NULL;
-    size_t cardsAmount = tState->deck->len;
+    status_t status = INIT;
 
     printf("YOU PULLED 2 CARDS:\n");
-    status_t status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
-    if (status == FAILURE) { 
-        return FAILURE; 
-    }
-    status = pushFront(&tState->playerHand, &card);
-    if (status == FAILURE) { 
-        return FAILURE; 
-    }
-    printCard(card);
-
-    card = NULL;
-    status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
+    status = pullRandomCard(&tState->deck, &tState->playerHand);
     if (status == FAILURE) {
         return FAILURE;
     }
-    status = pushFront(&tState->playerHand, &card);
+    status = pullRandomCard(&tState->deck, &tState->playerHand);
     if (status == FAILURE) {
-        return FAILURE; 
+        return FAILURE;
     }
-    printCard(card);
+    printCardlist(&tState->playerHand);
     printf("\n");
 
     printf("DEALER PULLED 2 CARDS:\n");
-    card = NULL;
-    status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
-    if (status == FAILURE) { 
-        return FAILURE; 
-    }
-    status = pushFront(&tState->dealerHand, &card);
-    if (status == FAILURE) { 
-        return FAILURE; 
-    }
-    printCard(card);
-
-    card = NULL;
-    status = popByInd(&tState->deck, &card, (rand() % cardsAmount--));
+    status = pullRandomCard(&tState->deck, &tState->dealerHand);
     if (status == FAILURE) {
         return FAILURE;
     }
-    status = pushFront(&tState->dealerHand, &card);
+    printCard(tState->dealerHand->head);
+    status = pullRandomCard(&tState->deck, &tState->dealerHand);
     if (status == FAILURE) {
-        return FAILURE; 
+        return FAILURE;
     }
     printf("?????????? you can't see this one\n");
     printf("\n");
@@ -300,11 +295,76 @@ status_t blackjackCheck(gamestate_t **state, nextAction_t *next) {
         return SUCCESS;
     }
 
-    // TODO don't forget to change to hit or stand
-    *next = END_GAME;
+    *next = HIT_OR_STAND;
     return SUCCESS;
 }
-//status_t hitOrStand(gamestate_t **state, nextAction_t *next);
+
+status_t hitOrStand(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+    cardlist_t *tDeck = tState->playerHand;
+
+    printf("\n");
+    printf("╦ ╦╦╔╦╗  ╔═╗╦═╗  ╔═╗╔╦╗╔═╗╔╗╔╔╦╗\n");
+    printf("╠═╣║ ║   ║ ║╠╦╝  ╚═╗ ║ ╠═╣║║║ ║║\n");
+    printf("╩ ╩╩ ╩   ╚═╝╩╚═  ╚═╝ ╩ ╩ ╩╝╚╝═╩╝\n\n");
+
+    printf("YOUR CARDS: \n");
+    printCardlist(&tDeck);
+    printf("\n");
+
+    char answer[100];
+    uint8_t score = 0;
+    answer_t result = INVALID;
+    status_t status = INIT;
+
+    while (result != STAND) {
+        printf("DO YOU WANT TO HIT OR STAND? please type \"hit\" or \"stand\": ");
+        scanf("%s", answer);
+        printf("\n");
+        result = questionHitStand(answer);
+
+        switch (result) {
+            case INVALID: 
+                printf("Your answer is INVALID.\n");
+                printf("Please try again or type \"quit\" if you want to quit game.\n\n");
+                break;
+            case STAND: 
+                printf("YOU CHOSE TO STAND\n");
+                // TODO don't forget to change to DEALER_DRAW
+                *next = END_GAME;
+                return SUCCESS;
+            case QUIT:
+                printf("YOU CHOSE TO QUIT THE GAME.\n");
+                *next = END_GAME;
+                return SUCCESS;
+            case HIT:
+                pullRandomCard(&tState->deck, &tState->playerHand);
+                printf("YOU GOT: ");
+                printCard(tState->playerHand->head);
+                printf("\n");
+
+                status = getCardlistScoreValue(&tState->playerHand, &score);
+                if (status == FAILURE) {
+                    *next = END_GAME;
+                    return FAILURE;
+                }
+                if (score > 21) {
+                    // TODO don't forget to change to PLAYER_LOSE
+                    *next = END_GAME;
+                    return SUCCESS;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+   *next = END_GAME;
+   return SUCCESS;
+}
 //status_t dealerDraw(gamestate_t **state, nextAction_t *next);
 //status_t resetPhase(gamestate_t **state, nextAction_t *next);
 

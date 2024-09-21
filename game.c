@@ -3,8 +3,8 @@
 void gamePlay() {
     srand(time(NULL));
     // TODO don't forget to uncomment here when adding new phase
-    status_t (*action[])(gamestate_t**, nextAction_t*) = { initGame, endGame, betting, initialDeal, blackjackCheck, /*, hitOrStand, 
-                                            dealerDraw, resetPhase, dealerBust, */blackJack/*, tie, 
+    status_t (*action[])(gamestate_t**, nextAction_t*) = { initGame, endGame, betting, initialDeal, blackjackCheck, hitOrStand, 
+                                            /*dealerDraw, resetPhase, dealerBust, */blackJack/*, tie, 
                                             playerLose, playerWin*/ };
 
     nextAction_t next = INIT_GAME;

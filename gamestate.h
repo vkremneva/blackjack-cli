@@ -24,7 +24,7 @@ typedef enum {
     BETTING,
     INITIAL_DEAL,
     BLACKJACK_CHECK,
-//    HIT_OR_STAND,
+    HIT_OR_STAND,
 //    DEALER_DRAW,
 //    RESET_PHASE,
 //    DEALER_BUST,
@@ -38,17 +38,20 @@ typedef enum {
     INVALID,
     QUIT,
     YES,
-    NO
+    NO,
+    HIT,
+    STAND
 } answer_t;
 
 answer_t questionYesNo(const char *answer);
+answer_t questionHitStand(const char *answer);
 
 status_t initGame(gamestate_t **newState, nextAction_t *next);
 status_t endGame(gamestate_t **state, nextAction_t *next);
 status_t betting(gamestate_t **state, nextAction_t *next);
 status_t initialDeal(gamestate_t **state, nextAction_t *next);
 status_t blackjackCheck(gamestate_t **state, nextAction_t *next);
-//status_t hitOrStand(gamestate_t **state, nextAction_t *next);
+status_t hitOrStand(gamestate_t **state, nextAction_t *next);
 //status_t dealerDraw(gamestate_t **state, nextAction_t *next);
 //status_t resetPhase(gamestate_t **state, nextAction_t *next);
 
