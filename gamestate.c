@@ -100,6 +100,7 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
     }
 
     printf("\n\nYOUR CASH: %d\n", tState->cash);
+    printf("POT: %d\n", tState->pot);
     printf("╔═╗╔═╗╔╦╗╔═╗  ╔═╗╦  ╦╔═╗╦═╗\n");
     printf("║ ╦╠═╣║║║║╣   ║ ║╚╗╔╝║╣ ╠╦╝\n");
     printf("╚═╝╩ ╩╩ ╩╚═╝  ╚═╝ ╚╝ ╚═╝╩╚═\n\n");
@@ -352,8 +353,7 @@ status_t hitOrStand(gamestate_t **state, nextAction_t *next) {
                     return FAILURE;
                 }
                 if (score > 21) {
-                    // TODO don't forget to change to PLAYER_LOSE
-                    *next = END_GAME;
+                    *next = PLAYER_LOSE;
                     return SUCCESS;
                 }
                 break;
@@ -398,5 +398,21 @@ status_t blackJack(gamestate_t **state, nextAction_t *next) {
     return SUCCESS;
 }
 //status_t tie(gamestate_t **state, nextAction_t *next);
-//status_t playerLose(gamestate_t **state, nextAction_t *next);
+status_t playerLose(gamestate_t **state, nextAction_t *next) {
+    if (*state == NULL) {
+        return FAILURE;
+    }
+    gamestate_t *tState = *state;
+    printf("\n");
+    printf("╔╗ ╦ ╦╔═╗╔╦╗\n");
+    printf("╠╩╗║ ║╚═╗ ║ \n");
+    printf("╚═╝╚═╝╚═╝ ╩ \n\n");
+
+    printf("YOU LOST, YOUR SCORE IS OVER 21\n");
+    tState->pot = 0;
+
+// TODO don't forget tp change to RESET
+    *next = END_GAME;
+    return SUCCESS;
+}
 //status_t playerWin(gamestate_t **state, nextAction_t *next);

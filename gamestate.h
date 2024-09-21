@@ -30,7 +30,7 @@ typedef enum {
 //    DEALER_BUST,
     BLACKJACK,
 //    TIE,
-//    PLAYER_LOSE,
+    PLAYER_LOSE,
     PLAYER_WIN
 } nextAction_t;
 
@@ -58,7 +58,7 @@ status_t hitOrStand(gamestate_t **state, nextAction_t *next);
 //status_t dealerBust(gamestate_t **state, nextAction_t *next);
 status_t blackJack(gamestate_t **state, nextAction_t *next);
 //status_t tie(gamestate_t **state, nextAction_t *next);
-//status_t playerLose(gamestate_t **state, nextAction_t *next);
+status_t playerLose(gamestate_t **state, nextAction_t *next);
 //status_t playerWin(gamestate_t **state, nextAction_t *next);
 
 #endif // GAMESTATE_H
