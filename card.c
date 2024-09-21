@@ -161,7 +161,26 @@ void printCard(card_t *card) {
         return;
     }
 
-    printf("%s of %s\n", rankName, suitName);
+    printf("%s Of %s\n", rankName, suitName);
+}
+
+status_t getCardScoreValue(card_t *card, uint8_t *score, bool *ace) {
+    if (card == NULL) {
+        return FAILURE;
+    }
+    uint8_t rank = getRankData(card);
+
+    if (rank == 1) {
+        *ace = true;
+    }
+
+    if (rank <= 10) {
+        *score = rank;
+    } else {
+        *score = 10;
+    }
+
+    return SUCCESS;
 }
 
 /*

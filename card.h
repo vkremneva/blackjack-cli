@@ -45,7 +45,6 @@ status_t getSuitName(card_t *card, char *suitName);
 status_t getRankName(card_t *card, char *rankName);
 
 void printCard(card_t *card);
-
-//status_t getCardScoreValue(card_t *card, uint8_t score);
+status_t getCardScoreValue(card_t *card, uint8_t *score, bool *ace);
 
 #endif // CARD_H
