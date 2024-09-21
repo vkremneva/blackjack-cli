@@ -186,3 +186,36 @@ status_t getCardlistScoreValue(cardlist_t **deck, uint8_t *score) {
 
     return SUCCESS;
 }
+
+void printCardlist(cardlist_t **deck) {
+    if (deck == NULL) {
+        return;
+    }
+
+    cardlist_t *tDeck = *deck;
+    card_t *tmpCard = tDeck->head;
+    for (size_t i = 0; i < tDeck->len; ++i) {
+        printCard(tmpCard);
+        tmpCard = tmpCard->next;
+    }
+}
+
+status_t pullRandomCard(cardlist_t **from, cardlist_t **to) {
+    if ((from == NULL) || (to == NULL)) {
+        return FAILURE;
+    }
+    cardlist_t *tFrom = *from;
+    cardlist_t *tTo = *to;
+    card_t *card = NULL;
+
+    status_t status = popByInd(&tFrom, &card, (rand() % tFrom->len));
+    if (status == FAILURE) { 
+        return FAILURE; 
+    }
+    status = pushFront(&tTo, &card);
+    if (status == FAILURE) { 
+        return FAILURE; 
+    }
+
+    return SUCCESS;
+}
