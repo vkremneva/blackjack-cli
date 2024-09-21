@@ -32,5 +32,6 @@ status_t freeDeck(cardlist_t **deck);
 status_t getCardlistScoreValue(cardlist_t **deck, uint8_t *score);
 void printCardlist(cardlist_t **deck);
 status_t pullRandomCard(cardlist_t **from, cardlist_t **to);
+status_t moveAllCards(cardlist_t **from, cardlist_t **to);
 
 #endif // CARDLIST_H

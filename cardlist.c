@@ -219,3 +219,27 @@ status_t pullRandomCard(cardlist_t **from, cardlist_t **to) {
 
     return SUCCESS;
 }
+
+status_t moveAllCards(cardlist_t **from, cardlist_t **to) {
+    if ((from == NULL) || (to == NULL)) {
+        return FAILURE;
+    }
+    cardlist_t *tFrom = *from;
+    cardlist_t *tTo = *to;
+    card_t *card = NULL;
+    status_t status = INIT;
+
+    while (tFrom->len != 0) {
+        card = NULL;
+        status = popByInd(&tFrom, &card, 0);
+        if (status == FAILURE) { 
+            return FAILURE; 
+        }
+        status = pushFront(&tTo, &card);
+        if (status == FAILURE) { 
+            return FAILURE; 
+        }
+    }
+    
+    return SUCCESS;
+}
