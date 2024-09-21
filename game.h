@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <stdlib.h>
+#include <time.h>
 
 #include "gamestate.h"
 
