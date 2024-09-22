@@ -1,16 +1,22 @@
+/**
+ * @file status.h
+
+ * @brief File containing enum with status codes for the result of the operation.
+ * 
+ */
+
+
 #ifndef STATUS_H
 #define STATUS_H
 
 /**
- * @brief Status codes used to indicate the result of operations.
+ * @brief Status codes used to indicate the result of operation.
  */
 typedef enum
 {
-    INIT,
+    INIT,           /**< Initial value for declarations. */
     SUCCESS,        /**< Operation completed successfully. */
     FAILURE,        /**< Operation failed. */
-    INPUT_SUCCESS,  /**< Input was successfully read and stored in the buffer. */
-    INPUT_FAILURE,   /**< An error occurred while reading the input. */
 } status_t;
 
-#endif // STATUS_H
+#endif /* STATUS_H */
