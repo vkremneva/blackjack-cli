@@ -11,13 +11,11 @@ void gamePlay() {
 
     status_t status = (*action[INIT_GAME])(&gamestate, &next);
     if (status == FAILURE) {
-        fprintf(stderr, "INIT_GAME PHASE FAILURE\n");
         next = END_GAME;
     }
 
     status = (*action[BETTING])(&gamestate, &next); 
     if (status == FAILURE) {
-        fprintf(stderr, "BETTING PHASE FAILURE\n");
         next = END_GAME;
     }
 
@@ -25,14 +23,9 @@ void gamePlay() {
     while (next != END_GAME) {
         status = (*action[next])(&gamestate, &next);
         if (status == FAILURE) {
-            fprintf(stderr, "Action FAILED");
             next = END_GAME;
         }
     }
 
     status = (*action[END_GAME])(&gamestate, &next);
-    if (status == FAILURE) {
-        fprintf(stderr, "END_GAME PHASE FAILURE\n");
-        return;
-    }
 }
