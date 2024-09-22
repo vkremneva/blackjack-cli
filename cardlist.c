@@ -162,14 +162,7 @@ status_t getCardlistScoreValue(cardlist_t **deck, uint8_t *score) {
         if (status == FAILURE) {
             return FAILURE;
         }
-        if (ace) {
-            *score += 10;
-        } else {
-            *score += cardScore;
-        }
-        if ((*score > 21) && (ace)) {
-            *score -= 10;
-        }
+        *score += cardScore;
         tmpCard = tmpCard->next;
     }
 
