@@ -3,7 +3,7 @@
 const char* CARD_SUIT_NAME[] = {
     "Hearts ♥", 
     "Clubs ♣", 
-    "Diamond ♦", 
+    "Diamonds ♦", 
     "Spades ♠"
 };
 const uint8_t CARD_SUIT_DATA[] = {
@@ -22,7 +22,6 @@ const char* CARD_RANK_NAME[] = {
 };
 const size_t CARD_SUIT_AMOUNT = 4;
 const size_t CARD_RANK_AMOUNT = 14;
-
 const size_t MAX_NAME_LENGTH = 10;
 
 bool isValidRank(uint8_t rank) {
@@ -51,16 +50,12 @@ status_t createCardData(uint8_t rank, uint8_t suit, uint8_t *newData) {
 status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
     card_t *card = (card_t *)malloc(sizeof(card_t));
     if (card == NULL) {
-        fprintf(stderr, "createSingleCard: failed to allocate memory.\n");
         return FAILURE;
     }
 
     uint8_t newData = 0;
     status_t status = createCardData(rank, suit, &newData);
     if (status == FAILURE) {
-        fprintf(stderr, "createSingleCard: failed to create card data.\n");
-        fprintf(stderr, "Provided rank: %d.\n", rank);
-        fprintf(stderr, "Provided suit: %d.\n", suit);
         free(card);
         return FAILURE;
     }
@@ -74,7 +69,6 @@ status_t createSingleCard(uint8_t rank, uint8_t suit, card_t **newCard) {
 
 status_t freeSingleCard(card_t **card) {
     if (*card == NULL) {
-        fprintf(stderr, "freeSingleCard: FAILED, card is NULL.\n");
         return FAILURE;
     }
 
@@ -83,14 +77,12 @@ status_t freeSingleCard(card_t **card) {
         *card = NULL;
         return SUCCESS;
     } else {
-        fprintf(stderr, "freeSingleCard: FAILED, card is not single.\n");
         return FAILURE;
     }
 }
 
 int8_t getRankData(card_t *card) {
     if (card == NULL) {
-        fprintf(stderr, "getRankData: failed, the card is NULL.\n");
         return 0;
     } else {
         return (card->data) >> 4;
@@ -99,7 +91,6 @@ int8_t getRankData(card_t *card) {
 
 int8_t getSuitData(card_t *card) {
     if (card == NULL) {
-        fprintf(stderr, "getSuitData: failed, the card is NULL.\n");
         return 0;
     } else {
         return (card->data) & 0x0F;
@@ -108,7 +99,6 @@ int8_t getSuitData(card_t *card) {
 
 status_t getSuitName(card_t *card, char *suitName) {
     if (card == NULL) {
-        fprintf(stderr, "getSuitName: failed, the card is NULL.\n");
         return FAILURE;
     }
 
@@ -120,15 +110,11 @@ status_t getSuitName(card_t *card, char *suitName) {
         }
     }
 
-    fprintf(stderr, "getSuitName: failed, no such suit.\n");
-    fprintf(stderr, "Provided card data: %d.\n", card->data);
-    fprintf(stderr, "Deduced suit data: %d.\n", suit_data);
     return FAILURE;
 }
 
 status_t getRankName(card_t *card, char *rankName) {
     if (card == NULL) {
-        fprintf(stderr, "getRankName: failed, the card is NULL.\n");
         return FAILURE;
     }
     uint8_t rank = getRankData(card);
@@ -137,16 +123,12 @@ status_t getRankName(card_t *card, char *rankName) {
         strcpy(rankName, CARD_RANK_NAME[rank]);
         return SUCCESS;
     } else {
-        fprintf(stderr, "getRankName: failed, rank is not valid.\n");
-        fprintf(stderr, "Provided card data: %d.\n", card->data);
-        fprintf(stderr, "Deduced rank data: %d.\n", rank);
         return FAILURE;
     }
 }
 
 void printCard(card_t *card) {
     if (card == NULL) {
-        fprintf(stderr, "printCard: FAILED, card is empty\n");
         return;
     } 
     char rankName[MAX_NAME_LENGTH];
@@ -182,24 +164,3 @@ status_t getCardScoreValue(card_t *card, uint8_t *score, bool *ace) {
 
     return SUCCESS;
 }
-
-/*
-uint8_t getScoreValue(card_t *card) {
-    //TODO ace can be rank 10 provide that
-    uint8_t score = 0;
-    uint8_t rank_data = (card->data) >> 4;
-
-    if ((rank_data <= 0) || (rank_data >= 14)) {
-        printf("Cannot determine score\n");
-        printf("Proveded data: %d\n", card->data);
-        printf("Rank data: %d\n", rank_data);
-
-    } else if (rank_data <= 10) {   
-        score = rank_data;
-    } else {
-        score = 10;
-    }
-
-    return score;
-}
-*/
