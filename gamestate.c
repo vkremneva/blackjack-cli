@@ -206,7 +206,7 @@ status_t betting(gamestate_t **state, nextAction_t *next) {
                 printf("POT IS EMPTY, YOU HAVE TO BET!\n\n");
             }
 
-        } else if (newBet >= tState->cash) {
+        } else if (newBet > tState->cash) {
             printf("YOU DON'T HAVE ENOUGH CASH\n\n");
 
         } else if (newBet % 10 != 0) {
