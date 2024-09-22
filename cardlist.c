@@ -20,9 +20,9 @@ status_t pushFront(cardlist_t **deck, card_t **card) {
     return SUCCESS;
 }
 
-status_t popFront(cardlist_t **deck) {
+status_t removeFront(cardlist_t **deck) {
     if (deck == NULL) {
-        fprintf(stderr, "popFront: FAILED, deck is NULL.\n");
+        fprintf(stderr, "removeFront: FAILED, deck is NULL.\n");
         return FAILURE;
     }
 
@@ -33,14 +33,14 @@ status_t popFront(cardlist_t **deck) {
     if (tDeck->len != 0) {
         tDeck->len -= 1;
     } else {
-        fprintf(stderr, "popFront: FAILED, len is already 0.\n");
+        fprintf(stderr, "removeFront: FAILED, len is already 0.\n");
         return FAILURE;
     }
 
     tmpCard->next = NULL;
     status_t status = freeSingleCard(&tmpCard);
     if (status == FAILURE) {
-        fprintf(stderr, "popFront: freeSingleCard FAILURE.\n");
+        fprintf(stderr, "removeFront: freeSingleCard FAILURE.\n");
         return FAILURE;
     }
     tmpCard = NULL;
@@ -148,9 +148,9 @@ status_t freeDeck(cardlist_t **deck) {
     status_t status = SUCCESS;
 
     while (tDeck->head != NULL) {
-        status = popFront(&tDeck);
+        status = removeFront(&tDeck);
         if (status == FAILURE) {
-            fprintf(stderr, "freeDeck: popFront FAILURE.\n");
+            fprintf(stderr, "freeDeck: removeFront FAILURE.\n");
             return FAILURE;
         }
     }
@@ -176,7 +176,14 @@ status_t getCardlistScoreValue(cardlist_t **deck, uint8_t *score) {
         if (status == FAILURE) {
             return FAILURE;
         }
-        *score += cardScore;
+        if (ace) {
+            *score += 10;
+        } else {
+            *score += cardScore;
+        }
+        if ((*score > 21) && (ace)) {
+            *score -= 10;
+        }
         tmpCard = tmpCard->next;
     }
 
