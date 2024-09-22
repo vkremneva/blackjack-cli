@@ -72,19 +72,19 @@ extern const size_t MAX_NAME_LENGTH;
  * 
  * card_d#data contains information about suit and rank in following format:
  * 
- * # first four bits are used to represent the suit in following way:
- *   # ????0001: Hearts,
- *   # ????0010: Clubs, 
- *   # ????0100: Diamonds,
- *   # ????1000: Spades.
- * # last four bits are representing the rank in following way:
- *   # 0001????: Ace,
- *   # 0010????: 2,
- *   # 0011????: 3,
- *   # and so on..,
- *   # 1011????: Jack,
- *   # 1100????: Queen,
- *   # 1101????: King.
+ * 1. first four bits are used to represent the suit in following way:
+ *    a. ????0001: Hearts,
+ *    b. ????0010: Clubs, 
+ *    c. ????0100: Diamonds,
+ *    d. ????1000: Spades.
+ * 2. last four bits are representing the rank in following way:
+ *    a. 0001????: Ace,
+ *    b. 0010????: 2,
+ *    c. 0011????: 3,
+ *    d. and so on..,
+ *    e. 1011????: Jack,
+ *    f. 1100????: Queen,
+ *    g. 1101????: King.
  */
 typedef struct card_t 
 {

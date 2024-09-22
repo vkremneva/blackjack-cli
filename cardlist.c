@@ -132,7 +132,7 @@ status_t freeDeck(cardlist_t **deck) {
     }
 
     cardlist_t *tDeck = *deck;
-    status_t status = SUCCESS;
+    status_t status = INIT;
 
     while (tDeck->head != NULL) {
         status = removeFront(&tDeck);
@@ -207,7 +207,7 @@ status_t pullRandomCard(cardlist_t **from, cardlist_t **to) {
 }
 
 status_t moveAllCards(cardlist_t **from, cardlist_t **to) {
-    if ((from == NULL) || (to == NULL)) {
+    if (from == NULL) {
         return FAILURE;
     }
     cardlist_t *tFrom = *from;

@@ -11,14 +11,8 @@ void gamePlay() {
 
     status_t status = (*action[INIT_GAME])(&gamestate, &next);
     if (status == FAILURE) {
-        next = END_GAME;
+        return;
     }
-
-    status = (*action[BETTING])(&gamestate, &next); 
-    if (status == FAILURE) {
-        next = END_GAME;
-    }
-
 
     while (next != END_GAME) {
         status = (*action[next])(&gamestate, &next);

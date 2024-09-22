@@ -4,7 +4,7 @@
  * @brief File containing functions and nesessary constants to work with cardlists.
  *
  * The cardlist consists of card_t cards and represent a playing deck of cards.
- * Each cardlist is operationg as a linked list in First-In-Lase-Out model.
+ * Each cardlist is operationg as a linked list in First-In-Last-Out model.
  * 
  */
 
@@ -26,7 +26,6 @@
  * to the next card of the cardlist.
  * 
  */
-
 typedef struct cardlist_t 
 {
     struct card_t *head; /**< A pointer to the head of the list, i.e. first card in the deck. */
