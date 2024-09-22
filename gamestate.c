@@ -35,28 +35,24 @@ answer_t questionHitStand(const char *answer) {
 status_t initGame(gamestate_t **newState, nextAction_t *next) {
     gamestate_t *state = (gamestate_t *)malloc(sizeof(gamestate_t));
     if (state == NULL) {
-        fprintf(stderr, "initGame: FAILED to create game state.\n");
         return FAILURE;
     }
 
     state->deck = NULL;
     status_t status = initFullDeck(&state->deck);
     if (status == FAILURE) {
-        fprintf(stderr, "initGame: FAILURE creating deck\n");
         return FAILURE;
     }
 
     state->playerHand = NULL;
     status = initEmptyDeck(&state->playerHand);
     if (status == FAILURE) {
-        fprintf(stderr, "initGame: FAILURE creating playerHand\n");
         return FAILURE;
     }
 
     state->dealerHand = NULL;
     status = initEmptyDeck(&state->dealerHand);
     if (status == FAILURE) {
-        fprintf(stderr, "initGame: FAILURE creating dealerHand\n");
         return FAILURE;
     }
 
@@ -75,7 +71,6 @@ status_t initGame(gamestate_t **newState, nextAction_t *next) {
 
 status_t endGame(gamestate_t **state, nextAction_t *next) {
     if (*state == NULL) {
-        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
         return FAILURE;
     }
 
@@ -83,19 +78,16 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
 
     status_t status = freeDeck(&(tState->deck));
     if (status == FAILURE) {
-        fprintf(stderr, "endGame: FAILURE freeing deck.\n");
         return FAILURE;
     }
 
     status = freeDeck(&(tState->playerHand));
     if (status == FAILURE) {
-        fprintf(stderr, "endGame: FAILURE freeing playerHand.\n");
         return FAILURE;
     }
 
     status = freeDeck(&(tState->dealerHand));
     if (status == FAILURE) {
-        fprintf(stderr, "endGame: FAILURE freeing dealerHand.\n");
         return FAILURE;
     }
 
@@ -115,7 +107,6 @@ status_t endGame(gamestate_t **state, nextAction_t *next) {
 
 status_t betting(gamestate_t **state, nextAction_t *next) {
     if (*state == NULL) {
-        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
         return FAILURE;
     }
     gamestate_t *tState = *state;
@@ -236,7 +227,6 @@ status_t betting(gamestate_t **state, nextAction_t *next) {
 
 status_t initialDeal(gamestate_t **state, nextAction_t *next) {
     if (*state == NULL) {
-        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
         return FAILURE;
     }
     gamestate_t *tState = *state;
@@ -279,7 +269,6 @@ status_t initialDeal(gamestate_t **state, nextAction_t *next) {
 
 status_t blackjackCheck(gamestate_t **state, nextAction_t *next) {
     if (*state == NULL) {
-        fprintf(stderr, "endGame: gamestate_t state is NULL\n");
         return FAILURE;
     }
     gamestate_t *tState = *state;
